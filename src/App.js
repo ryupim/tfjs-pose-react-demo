@@ -2,6 +2,8 @@ import React, { useRef } from "react";
 import "./App.css";
 import * as tf from "@tensorflow/tfjs";
 import * as posenet from "@tensorflow-models/posenet";
+import * as posedetection from "@tensorflow-models/pose-detection";
+import * as mpPose from "@mediapipe/pose";
 
 import Webcam from "react-webcam";
 import { drawKeypoints, drawSkeleton } from "./utilities";
@@ -12,11 +14,13 @@ function App() {
 
   // Load posenet
   const runPoseEstimation = async () => {
-    const net = await posenet.load({
-      inputResolution: { width: 640, height: 480 },
-      scale: 0.5,
-    });
+    // const net = await posenet.load({
+    //   inputResolution: { width: 640, height: 480 },
+    //   scale: 0.5,
+    // });
 
+    const model = posedetection.SupportedModels.MoveNet;
+    const net = await posedetection.createDetector(model);
     setInterval(() => {
       detect(net);
     }, 100);
@@ -38,7 +42,7 @@ function App() {
       webcamRef.current.video.height = videoHeight;
 
       // Make Detections
-      const pose = await net.estimateSinglePose(video);
+      const pose = await net.estimatePoses(video);
       console.log(pose);
 
       drawCanvas(pose, video, videoWidth, videoHeight, canvasRef);
@@ -50,8 +54,8 @@ function App() {
     canvas.current.width = videoWidth;
     canvas.current.height = vidoeHeight;
 
-    drawKeypoints(pose["keypoints"], 0.5, ctx);
-    drawSkeleton(pose["keypoints"], 0.5, ctx);
+    drawKeypoints(pose[0]["keypoints"], 0.5, ctx);
+    drawSkeleton(pose[0]["keypoints"], 0.5, ctx);
   };
   runPoseEstimation();
 

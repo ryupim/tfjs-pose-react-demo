@@ -80,6 +80,11 @@ function toTuple({ y, x }) {
   return [y, x];
 }
 
+function toTuplePosition(keypoint) {
+  const { y, x } = keypoint;
+  return [y, x];
+}
+
 export function drawPoint(ctx, y, x, r, color) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI);
@@ -110,8 +115,8 @@ export function drawSkeleton(keypoints, minConfidence, ctx, scale = 1) {
 
   adjacentKeyPoints.forEach((keypoints) => {
     drawSegment(
-      toTuple(keypoints[0].position),
-      toTuple(keypoints[1].position),
+      toTuplePosition(keypoints[0]),
+      toTuplePosition(keypoints[1]),
       color,
       scale,
       ctx
@@ -130,7 +135,7 @@ export function drawKeypoints(keypoints, minConfidence, ctx, scale = 1) {
       continue;
     }
 
-    const { y, x } = keypoint.position;
+    const { y, x } = keypoint;
     drawPoint(ctx, y * scale, x * scale, 3, color);
   }
 }
