@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
 import "./App.css";
-import * as tf from "@tensorflow/tfjs";
-import * as posenet from "@tensorflow-models/posenet";
 import * as posedetection from "@tensorflow-models/pose-detection";
-import * as mpPose from "@mediapipe/pose";
+import "@tensorflow/tfjs-core";
+import "@tensorflow/tfjs-backend-webgl";
+import "@mediapipe/pose";
 
 import Webcam from "react-webcam";
 import { drawKeypoints, drawSkeleton } from "./utilities";
@@ -18,9 +18,20 @@ function App() {
         //   inputResolution: { width: 640, height: 480 },
         //   scale: 0.5,
         // });
+        const modelString = "MoveNet";
 
         const model = posedetection.SupportedModels.MoveNet;
-        const net = await posedetection.createDetector(model);
+        let net;
+        if (modelString === "BlazePose") {
+            const detectorConfig = {
+                runtime: "mediapipe", // or 'tfjs'
+                modelType: "full",
+                solutionPath: "base/node_modules/@mediapipe/pose",
+            };
+            net = await posedetection.createDetector(model, detectorConfig);
+        } else {
+            net = await posedetection.createDetector(model);
+        }
         setInterval(() => {
             detect(net);
         }, 100);
