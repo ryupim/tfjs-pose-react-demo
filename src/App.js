@@ -18,13 +18,13 @@ function App() {
         //   inputResolution: { width: 640, height: 480 },
         //   scale: 0.5,
         // });
-        const modelString = "MoveNet";
+        const modelString = "BlazePose";
+        const model = posedetection.SupportedModels.BlazePose;
 
-        const model = posedetection.SupportedModels.MoveNet;
         let net;
         if (modelString === "BlazePose") {
             const detectorConfig = {
-                runtime: "mediapipe", // or 'tfjs'
+                runtime: "tfjs", // don't work 'mediepipe'
                 modelType: "full",
                 solutionPath: "base/node_modules/@mediapipe/pose",
             };
@@ -66,7 +66,7 @@ function App() {
         canvas.current.height = vidoeHeight;
 
         drawKeypoints(pose[0]["keypoints"], 0.5, ctx);
-        drawSkeleton(pose[0]["keypoints"], 0.5, ctx);
+        // drawSkeleton(pose[0]["keypoints"], 0.5, ctx);s
     };
     runPoseEstimation();
 
